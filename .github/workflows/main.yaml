@@ -42,21 +42,22 @@ jobs:
     name: Run tests with pytest
     needs: lint
 
-    env:
-      TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
-      TEST_DB_PORT: ${{ secrets.TEST_DB_PORT }}
-      TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
-      POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
-
     services:
       postgres:
         image: postgres:15.1-alpine
         env:
-          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: postgres
+          POSTGRES_USER: postgres_user
+          POSTGRES_PASSWORD: postgres_password
+          TEST_DB_HOST: localhost
+          TEST_DB_PORT: 5432
+          TEST_DB_NAME: test_postgres
+          TEST_POSTGRES_USER: test_postgres_user
+          TEST_POSTGRES_PASSWORD: test_postgres_password
         ports:
-          - 6000:5432
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
