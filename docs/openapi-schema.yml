@@ -1,0 +1,420 @@
+openapi: 3.1.0
+info:
+  title: Coiled Steel API
+  description: Минимальный REST API сервис для работы со складом рулонной стали.
+  version: 0.1.0
+paths:
+  /api/v1/coiled_steel:
+    post:
+      summary: Добавление нового рулона на склад
+      description: >-
+        Добавляем новый рулон на склад, принимая параметры рулона в теле
+        запроса.
+      operationId: add_coiled_steel_api_v1_coiled_steel_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoiledSteelAddDOT'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoiledSteelDOT'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      summary: Получение списка рулонов со склада
+      description: >-
+        Получаем список рулонов по заданным параметрам запроса.
+
+
+        Фильтрация работает с комбинациями нескольких диапазонов сразу.
+
+        Если параметры не переданы, то результатом будет список со всеми
+        объектами
+
+        рулонов из БД.
+
+
+        Примеры запросов:
+
+
+        - api/v1/coiled_steel
+
+        - api/v1/coiled_steel?min_id=2&max_id=7
+
+        -
+        api/v1/coiled_steel?min_created_at=2025-03-17&max_created_at=2025-03-30
+
+
+        Пример комбинации нескольких диапазонов сразу:
+
+        - api/v1/coiled_steel?min_id=2&max_id=4&min_id=7&max_id=9
+      operationId: filtered_coiled_steel_api_v1_coiled_steel_get
+      parameters:
+        - name: min_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Min Id
+        - name: max_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Max Id
+        - name: min_length
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Min Length
+        - name: max_length
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Max Length
+        - name: min_weight
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Min Weight
+        - name: max_weight
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: integer
+              - type: 'null'
+            title: Max Weight
+        - name: min_created_at
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: string
+                  format: date-time
+              - type: 'null'
+            title: Min Created At
+        - name: max_created_at
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: string
+                  format: date-time
+              - type: 'null'
+            title: Max Created At
+        - name: min_deleted_at
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: string
+                  format: date-time
+              - type: 'null'
+            title: Min Deleted At
+        - name: max_deleted_at
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: string
+                  format: date-time
+              - type: 'null'
+            title: Max Deleted At
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/CoiledSteelDOT'
+                    - type: 'null'
+                title: Response Filtered Coiled Steel Api V1 Coiled Steel Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/api/v1/coiled_steel/{steel_id}':
+    delete:
+      summary: Удаление рулона со склада
+      description: 'Удаляем рулон со склада, изменяя поле «deleted_at» в БД.'
+      operationId: del_coiled_steel_api_v1_coiled_steel__steel_id__delete
+      parameters:
+        - name: steel_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: ID рулона
+            title: Steel Id
+          description: ID рулона
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoiledSteelDOT'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/coiled_steel/stats:
+    get:
+      summary: Cтатистика по рулонам за определённый период
+      description: |-
+        Получаем статистику по рулонам за определённый период.
+
+        Пример запроса:
+
+        - api/v1/coiled_steel/stats?start_date=2025-03-17&end_date=2025-03-30
+      operationId: stats_coiled_steel_api_v1_coiled_steel_stats_get
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            description: Начало диапазона для сбора статистики
+            title: Start Date
+          description: Начало диапазона для сбора статистики
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            description: Конец диапазона для сбора статистики
+            title: End Date
+          description: Конец диапазона для сбора статистики
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoiledSteelStatsDOT'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CoiledSteelAddDOT:
+      properties:
+        length:
+          type: integer
+          exclusiveMinimum: 0
+          title: Length
+          description: Длина рулона в метрах.
+        weight:
+          type: integer
+          exclusiveMinimum: 0
+          title: Weight
+          description: Вес рулона в кг.
+      type: object
+      required:
+        - length
+        - weight
+      title: CoiledSteelAddDOT
+      description: Pydantic модель для добавления рулона стали.
+    CoiledSteelDOT:
+      properties:
+        length:
+          type: integer
+          exclusiveMinimum: 0
+          title: Length
+          description: Длина рулона в метрах.
+        weight:
+          type: integer
+          exclusiveMinimum: 0
+          title: Weight
+          description: Вес рулона в кг.
+        id:
+          type: integer
+          title: Id
+          description: ID рулона.
+        created_at:
+          type: string
+          title: Created At
+          description: Дата и время добавления рулона.
+        deleted_at:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Deleted At
+          description: Дата и время удаления рулона.
+      type: object
+      required:
+        - length
+        - weight
+        - id
+        - created_at
+      title: CoiledSteelDOT
+      description: Pydantic модель для получения информации о рулоне стали.
+    CoiledSteelStatsDOT:
+      properties:
+        number_of_added:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Number Of Added
+          description: Количество добавленных рулонов за период
+        number_of_deleted:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Number Of Deleted
+          description: Количество удалённых рулонов за период
+        avg_length:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Avg Length
+          description: Cредняя длина рулонов за период
+        avg_weight:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Avg Weight
+          description: Cредний вес рулонов за период
+        max_length:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Max Length
+          description: Максимальная длина рулона за период
+        min_length:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Min Length
+          description: Минимальная длина рулона за период
+        max_weight:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Max Weight
+          description: Максимальный вес рулонов за период
+        min_weight:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Min Weight
+          description: Минимальный вес рулонов за период
+        sum_weight:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Sum Weight
+          description: Cуммарный вес рулонов на складе
+        max_interval_between_del:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Max Interval Between Del
+          description: Максимальный промежуток между добавлением и удалением рулона
+        min_interval_between_del:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Min Interval Between Del
+          description: Минимальный промежуток между добавлением и удалением рулона
+      type: object
+      required:
+        - number_of_added
+        - number_of_deleted
+        - avg_length
+        - avg_weight
+        - max_length
+        - min_length
+        - max_weight
+        - min_weight
+        - sum_weight
+        - max_interval_between_del
+        - min_interval_between_del
+      title: CoiledSteelStatsDOT
+      description: Pydantic модель для вывода статистики по рулонам.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError

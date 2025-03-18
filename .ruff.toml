@@ -1,0 +1,6 @@
+target-version = "py310"
+exclude = ["src/migrations"]
+
+[lint]
+select = ["E", "W", "F", "C", "D", "B", "I"]
+extend-ignore = ["D100", "D104", "D213", "D203"]
