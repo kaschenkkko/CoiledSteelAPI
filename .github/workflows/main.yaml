@@ -43,12 +43,12 @@ jobs:
     needs: lint
 
     env:
-      DB_HOST: postgres
+      DB_HOST: localhost
       DB_PORT: 5432
       DB_NAME: postgres
       POSTGRES_USER: postgres_user
       POSTGRES_PASSWORD: postgres_password
-      TEST_DB_HOST: postgres
+      TEST_DB_HOST: localhost
       TEST_DB_PORT: 5432
       TEST_DB_NAME: test_postgres
       TEST_POSTGRES_USER: test_postgres_user
