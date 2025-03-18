@@ -12,6 +12,14 @@
 
 </div>
 
+Статус проверки линтеров и тестов:
+
+[![coiled_steel_api_workflow](https://github.com/kaschenkkko/CoiledSteelAPI/actions/workflows/main.yaml/badge.svg)](https://github.com/kaschenkkko/CoiledSteelAPI/actions/workflows/main.yaml)
+
+Документация к API доступна:
+
+[API Documentation ](https://kaschenkkko.github.io/CoiledSteelAPI/)
+
 <h2>Техническое задание проекта</h2>
 
 ### Обязательные пункты:
