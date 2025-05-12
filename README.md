@@ -1,6 +1,5 @@
 <div id="header" align="center">
   <h1>Coiled Steel API</h1>
-  <h2>Тестовое задание на стажировку IT HUB «Северстали»</h2>
 
   ![Python](https://img.shields.io/badge/-Python_3.10-000?&logo=Python)
   ![FastAPI](https://img.shields.io/badge/-FastAPI_0.115.11-000?&logo=FastAPI)
